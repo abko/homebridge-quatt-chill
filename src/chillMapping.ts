@@ -88,6 +88,8 @@ export function describeAction(action: ChillAction): string {
   }
 }
 
+const humanize = (s: string): string => s.toLowerCase().replace(/_/g, ' ');
+
 /** Human-readable device status, for state-transition logs. */
 export function describeStatus(status: string): string {
   switch (status) {
@@ -100,6 +102,9 @@ export function describeStatus(status: string): string {
     case 'OFFLINE':
       return 'offline';
     default:
-      return status; // free-form warning/diagnostic strings, shown as-is
+      // Free-form diagnostics like WARNING_DISCONNECTED — make them readable.
+      return status.startsWith('WARNING_')
+        ? `warning — ${humanize(status.slice('WARNING_'.length))}`
+        : humanize(status);
   }
 }

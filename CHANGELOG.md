@@ -14,6 +14,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     `Airco: fan → HIGH — failed: <reason>`.
   - Device **state transitions** are logged when they change (e.g.
     `Airco: cooling`, `Airco: went offline`, `Airco: back online (off)`).
+  - Diagnostic statuses are humanised, e.g. `WARNING_DISCONNECTED` →
+    `Airco: warning — disconnected`.
 
 ### Changed
 

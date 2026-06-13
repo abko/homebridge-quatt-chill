@@ -110,11 +110,12 @@ describe('describeAction (log text)', () => {
 });
 
 describe('describeStatus (log text)', () => {
-  it('humanises known statuses and passes through warnings', () => {
+  it('humanises known statuses and warning strings', () => {
     expect(describeStatus('COOLING')).toBe('cooling');
     expect(describeStatus('OFFLINE')).toBe('offline');
+    expect(describeStatus('WARNING_DISCONNECTED')).toBe('warning — disconnected');
     expect(describeStatus('WARNING_NOT_COOLING_HEATING_SYSTEM_IS_HEATING')).toBe(
-      'WARNING_NOT_COOLING_HEATING_SYSTEM_IS_HEATING',
+      'warning — not cooling heating system is heating',
     );
   });
 });
