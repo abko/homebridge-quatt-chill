@@ -37,18 +37,16 @@ describe('HK constants match hap-nodejs (guard against drift)', () => {
 });
 
 describe('fan mode <-> rotation speed', () => {
-  it('maps each fan mode to a discrete stop', () => {
+  it('maps each fan mode to a discrete stop (0/33/66/99)', () => {
     expect(fanModeToRotationSpeed('LOW')).toBe(33);
     expect(fanModeToRotationSpeed('NORMAL')).toBe(66);
-    expect(fanModeToRotationSpeed('HIGH')).toBe(100);
+    expect(fanModeToRotationSpeed('HIGH')).toBe(99);
   });
 
-  it('buckets arbitrary speeds back to a fan mode', () => {
-    expect(rotationSpeedToFanMode(0)).toBe('LOW');
+  it('buckets the stepped slider values back to a fan mode', () => {
     expect(rotationSpeedToFanMode(33)).toBe('LOW');
-    expect(rotationSpeedToFanMode(34)).toBe('NORMAL');
     expect(rotationSpeedToFanMode(66)).toBe('NORMAL');
-    expect(rotationSpeedToFanMode(67)).toBe('HIGH');
+    expect(rotationSpeedToFanMode(99)).toBe('HIGH');
     expect(rotationSpeedToFanMode(100)).toBe('HIGH');
   });
 

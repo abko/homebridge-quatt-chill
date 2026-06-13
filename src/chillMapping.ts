@@ -11,7 +11,11 @@ export const HK = {
   TargetHeaterCoolerState: { AUTO: 0, HEAT: 1, COOL: 2 },
 } as const;
 
-/** Chill fan mode -> HomeKit RotationSpeed percentage (3 discrete stops). */
+/**
+ * Chill fan mode -> HomeKit RotationSpeed. With a 33% step the slider snaps to
+ * four stops: 0 = Off, 33 = Low, 66 = Normal, 99 = High. (High is 99, not 100,
+ * so it lands exactly on a step and HomeKit doesn't complain.)
+ */
 export function fanModeToRotationSpeed(fanMode: ChillFanMode): number {
   switch (fanMode) {
     case 'LOW':
@@ -19,7 +23,7 @@ export function fanModeToRotationSpeed(fanMode: ChillFanMode): number {
     case 'NORMAL':
       return 66;
     case 'HIGH':
-      return 100;
+      return 99;
   }
 }
 

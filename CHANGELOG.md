@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-13
+
+### Changed
+
+- **Fan slider is now a 4-stop stepped control**: Off (0) / Low (33) / Normal (66) /
+  High (99), matching the device's three fan speeds plus off.
+- Dragging the fan to 0 no longer sends a spurious `SET_FAN_MODE LOW`; 0 is treated
+  purely as off (handled by the power characteristic). This also removes a race where
+  the stray fan command could fight the implicit "turn off" from HomeKit.
+- When the unit is off, the fan slider now reads 0 instead of a non-zero speed, so the
+  power toggle and fan slider never contradict each other (fixes on/off flakiness when
+  using the fan slider).
+
 ## [0.2.0] - 2026-06-13
 
 ### Added

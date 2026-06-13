@@ -114,10 +114,19 @@ export class ChillService {
       },
     );
 
+    // Stepped slider: 0 = Off, 33 = Low, 66 = Normal, 99 = High.
     this.rotationSpeed = new CharacteristicDelegate(service, Characteristic.RotationSpeed, {
-      props: { minValue: 0, maxValue: 100, minStep: 1 },
-      setter: (value) =>
-        this.onAction({ type: 'SET_FAN_MODE', fanMode: rotationSpeedToFanMode(Number(value)) }),
+      props: { minValue: 0, maxValue: 99, minStep: 33 },
+      setter: (value) => {
+        if (Math.round(Number(value)) === 0) {
+          // 0 = off; the Active characteristic handles power, so send no fan command.
+          return;
+        }
+        return this.onAction({
+          type: 'SET_FAN_MODE',
+          fanMode: rotationSpeedToFanMode(Number(value)),
+        });
+      },
     });
 
     this.checkState(chill);
@@ -129,7 +138,8 @@ export class ChillService {
     this.active.value = chill.isOn.value ? 1 : 0;
     this.currentState.value = statusToCurrentState(chill.status, chill.isOn.value);
     this.targetState.value = modeToTargetState(chill.mode);
-    this.rotationSpeed.value = fanModeToRotationSpeed(chill.fanMode);
+    // Show 0 (off) when the unit is off, so the fan slider and power never disagree.
+    this.rotationSpeed.value = chill.isOn.value ? fanModeToRotationSpeed(chill.fanMode) : 0;
     // Temperatures may be null when offline — retain the last-known value.
     if (chill.ambientTemperature != null) {
       this.currentTemperature.value = chill.ambientTemperature;
