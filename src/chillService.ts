@@ -3,6 +3,7 @@ import { CharacteristicDelegate } from './lib/characteristicDelegate.js';
 import type { LevelLogger } from './lib/levelLogger.js';
 import {
   activeToOn,
+  describeStatus,
   fanModeToRotationSpeed,
   modeToTargetState,
   rotationSpeedToFanMode,
@@ -40,6 +41,7 @@ export class ChillService {
   private readonly rotationSpeed: CharacteristicDelegate;
   private readonly coolingRange: Range;
   private readonly heatingRange: Range;
+  private prevStatus?: string;
 
   constructor(
     api: API,
@@ -123,9 +125,7 @@ export class ChillService {
 
   /** Fan the latest device state out to all characteristics. */
   checkState(chill: Chill): void {
-    if (chill.status === 'OFFLINE') {
-      this.log.warn('chill "%s" is OFFLINE', chill.name ?? chill.uuid);
-    }
+    this.logStatusTransition(chill);
     this.active.value = chill.isOn.value ? 1 : 0;
     this.currentState.value = statusToCurrentState(chill.status, chill.isOn.value);
     this.targetState.value = modeToTargetState(chill.mode);
@@ -140,5 +140,22 @@ export class ChillService {
     if (chill.heatingTargetTemperature != null) {
       this.heatingThreshold.value = clamp(chill.heatingTargetTemperature, this.heatingRange);
     }
+  }
+
+  /** Log the initial state once, then only when the device's status changes. */
+  private logStatusTransition(chill: Chill): void {
+    const name = chill.name ?? 'Quatt Chill';
+    if (this.prevStatus === undefined) {
+      this.log.info('%s: %s', name, describeStatus(chill.status));
+    } else if (chill.status !== this.prevStatus) {
+      if (chill.status === 'OFFLINE') {
+        this.log.info('%s: went offline', name);
+      } else if (this.prevStatus === 'OFFLINE') {
+        this.log.info('%s: back online (%s)', name, describeStatus(chill.status));
+      } else {
+        this.log.info('%s: %s', name, describeStatus(chill.status));
+      }
+    }
+    this.prevStatus = chill.status;
   }
 }

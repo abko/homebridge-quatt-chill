@@ -3,6 +3,8 @@ import { Characteristic } from 'hap-nodejs';
 import {
   HK,
   activeToOn,
+  describeAction,
+  describeStatus,
   fanModeToRotationSpeed,
   modeToTargetState,
   rotationSpeedToFanMode,
@@ -89,5 +91,30 @@ describe('active -> on', () => {
   it('maps active to boolean', () => {
     expect(activeToOn(HK.Active.ACTIVE)).toBe(true);
     expect(activeToOn(HK.Active.INACTIVE)).toBe(false);
+  });
+});
+
+describe('describeAction (log text)', () => {
+  it('describes each action type', () => {
+    expect(describeAction({ type: 'SET_ON_OFF', on: true })).toBe('turned on');
+    expect(describeAction({ type: 'SET_ON_OFF', on: false })).toBe('turned off');
+    expect(describeAction({ type: 'SET_MODE', mode: 'COOLING' })).toBe('mode → COOLING');
+    expect(describeAction({ type: 'SET_FAN_MODE', fanMode: 'HIGH' })).toBe('fan → HIGH');
+    expect(
+      describeAction({ type: 'SET_COOLING_TARGET_TEMPERATURE', coolingTargetTemperature: 20 }),
+    ).toBe('cooling target → 20°C');
+    expect(
+      describeAction({ type: 'SET_HEATING_TARGET_TEMPERATURE', heatingTargetTemperature: 18 }),
+    ).toBe('heating target → 18°C');
+  });
+});
+
+describe('describeStatus (log text)', () => {
+  it('humanises known statuses and passes through warnings', () => {
+    expect(describeStatus('COOLING')).toBe('cooling');
+    expect(describeStatus('OFFLINE')).toBe('offline');
+    expect(describeStatus('WARNING_NOT_COOLING_HEATING_SYSTEM_IS_HEATING')).toBe(
+      'WARNING_NOT_COOLING_HEATING_SYSTEM_IS_HEATING',
+    );
   });
 });

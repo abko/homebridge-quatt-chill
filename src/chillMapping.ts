@@ -1,4 +1,4 @@
-import type { ChillFanMode, ChillMode } from './quatt/types.js';
+import type { ChillAction, ChillFanMode, ChillMode } from './quatt/types.js';
 
 /**
  * HAP characteristic enum values, mirrored here so the mapping functions stay
@@ -70,4 +70,36 @@ export function targetStateToMode(value: number): ChillMode {
 /** HomeKit Active -> Chill on/off boolean. */
 export function activeToOn(value: number): boolean {
   return value === HK.Active.ACTIVE;
+}
+
+/** Human-readable one-liner for a control action, for Info-level logs. */
+export function describeAction(action: ChillAction): string {
+  switch (action.type) {
+    case 'SET_ON_OFF':
+      return action.on ? 'turned on' : 'turned off';
+    case 'SET_MODE':
+      return `mode → ${action.mode}`;
+    case 'SET_FAN_MODE':
+      return `fan → ${action.fanMode}`;
+    case 'SET_COOLING_TARGET_TEMPERATURE':
+      return `cooling target → ${action.coolingTargetTemperature}°C`;
+    case 'SET_HEATING_TARGET_TEMPERATURE':
+      return `heating target → ${action.heatingTargetTemperature}°C`;
+  }
+}
+
+/** Human-readable device status, for state-transition logs. */
+export function describeStatus(status: string): string {
+  switch (status) {
+    case 'COOLING':
+      return 'cooling';
+    case 'HEATING':
+      return 'heating';
+    case 'OFF':
+      return 'off';
+    case 'OFFLINE':
+      return 'offline';
+    default:
+      return status; // free-form warning/diagnostic strings, shown as-is
+  }
 }
