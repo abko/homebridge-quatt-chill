@@ -1,0 +1,69 @@
+{
+  "name": "homebridge-quatt-chill",
+  "displayName": "Quatt Chill",
+  "version": "0.1.0",
+  "description": "Homebridge 2.0 plugin to control the Quatt Chill airco from Apple HomeKit (via the Quatt cloud mobile API).",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "quatt",
+    "chill",
+    "airco",
+    "air-conditioning",
+    "heatercooler",
+    "homekit"
+  ],
+  "bin": {
+    "quatt-chill-pair": "dist/quatt/pairCli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "dev": "npm run build && homebridge -D -U ./.hb-dev -P .",
+    "pair": "npm run build && node dist/quatt/pairCli.js",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run lint && npm run build && npm test"
+  },
+  "files": [
+    "dist",
+    "config.schema.json",
+    "homebridge-ui",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "hap-nodejs": "^1.1.0",
+    "homebridge": "^1.8.5",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vitest": "^2.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abko/homebridge-quatt-chill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abko/homebridge-quatt-chill/issues"
+  },
+  "homepage": "https://github.com/abko/homebridge-quatt-chill#readme"
+}

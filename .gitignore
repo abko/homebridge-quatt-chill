@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.hb-dev/
+*.log
+.DS_Store
+coverage/
+*.tgz
+# never commit obtained Quatt/Firebase tokens
+quatt-chill-tokens.json

@@ -1,0 +1,54 @@
+{
+  "pluginAlias": "QuattChill",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Control your Quatt Chill airco from HomeKit. **Pairing is required once**: set the CIC hostname below, then run `quatt-chill-pair --cic <cic-hostname>` (or use the plugin's terminal), press the button on your CIC, and paste the returned `installationId` here.",
+  "footerDisplay": "This plugin uses Quatt's cloud mobile API (reverse-engineered). It depends on Quatt's servers being reachable.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Quatt Chill",
+        "required": true
+      },
+      "cicId": {
+        "title": "CIC hostname",
+        "type": "string",
+        "placeholder": "cic-abc123",
+        "description": "The hostname of your Quatt CIC (Commander). Used for pairing.",
+        "required": true
+      },
+      "installationId": {
+        "title": "Installation ID",
+        "type": "string",
+        "placeholder": "INS-...",
+        "description": "Filled in by the pairing step. Leave blank until you have paired."
+      },
+      "heartrateSeconds": {
+        "title": "Poll interval (seconds)",
+        "type": "integer",
+        "default": 60,
+        "minimum": 60,
+        "description": "How often to poll the Quatt cloud. The cloud refreshes ~once a minute, so 60s is recommended."
+      },
+      "tokenFile": {
+        "title": "Token file path",
+        "type": "string",
+        "description": "Optional. Where to store the auth tokens. Defaults to the Homebridge storage path."
+      },
+      "logLevel": {
+        "title": "Log level",
+        "type": "integer",
+        "default": 1,
+        "oneOf": [
+          { "title": "Off", "enum": [0] },
+          { "title": "Info", "enum": [1] },
+          { "title": "Debug", "enum": [2] },
+          { "title": "Verbose (HTTP traces)", "enum": [3] }
+        ]
+      }
+    }
+  }
+}
