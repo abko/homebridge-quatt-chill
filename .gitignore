@@ -7,3 +7,6 @@ coverage/
 *.tgz
 # never commit obtained Quatt/Firebase tokens
 quatt-chill-tokens.json
+
+# Claude Code session/local files
+.claude/
