@@ -10,9 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # npm provenance
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      id-token: write # required for npm OIDC trusted publishing (no token needed)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,18 +22,21 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm test
-      - name: Check whether this version is already on npm
+      # Trusted publishing (OIDC) needs a recent npm.
+      - run: npm install -g npm@latest
+      - name: Skip if this version is already published
         id: check
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if npm view "homebridge-quatt-chill@$VERSION" version >/dev/null 2>&1; then
-            echo "Version $VERSION already published — skipping publish."
+            echo "Version $VERSION already published — skipping."
             echo "publish=false" >> "$GITHUB_OUTPUT"
           else
             echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
+      # No NODE_AUTH_TOKEN: auth comes from GitHub's OIDC identity once you've
+      # configured this repo+workflow as a Trusted Publisher on npmjs.com.
+      # Provenance is attached automatically.
       - name: Publish to npm
-        if: steps.check.outputs.publish == 'true' && env.NPM_TOKEN != ''
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: steps.check.outputs.publish == 'true'
+        run: npm publish --access public
