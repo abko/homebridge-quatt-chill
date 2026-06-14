@@ -2,7 +2,7 @@
   "pluginAlias": "QuattChill",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Control your Quatt Chill airco from HomeKit. **Pairing is required once**: set the CIC hostname below, then run `quatt-chill-pair --cic <cic-hostname>` (or use the plugin's terminal), press the button on your CIC, and paste the returned `installationId` here.",
+  "headerDisplay": "Control your Quatt Chill airco from HomeKit. **Pairing is required once**: set the CIC hostname below, then either click **Pair with Quatt** above and press the button on your CIC, or just save and restart Homebridge and press the button when the log prompts you (60s).",
   "footerDisplay": "This plugin uses Quatt's cloud mobile API (reverse-engineered). It depends on Quatt's servers being reachable.",
   "schema": {
     "type": "object",
@@ -19,12 +19,6 @@
         "placeholder": "cic-abc123",
         "description": "The hostname of your Quatt CIC (Commander). Used for pairing.",
         "required": true
-      },
-      "installationId": {
-        "title": "Installation ID",
-        "type": "string",
-        "placeholder": "INS-...",
-        "description": "Filled in by the pairing step. Leave blank until you have paired."
       },
       "heartrateSeconds": {
         "title": "Poll interval (seconds)",

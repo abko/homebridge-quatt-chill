@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .qc-card {
+        border: 1px solid var(--bs-border-color, #ccc);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .qc-card h4 { margin-top: 0; }
+      #qc-status { margin-top: 10px; min-height: 1.4em; }
+      #qc-countdown { margin-left: 8px; opacity: 0.7; }
+      .qc-muted { opacity: 0.75; font-size: 0.9em; }
+    </style>
+  </head>
+  <body>
+    <div class="qc-card">
+      <h4>Pair with Quatt</h4>
+      <p class="qc-muted">
+        Set the <b>CIC hostname</b> in the form below and click <b>Save</b>, then click
+        <b>Pair</b> and press the physical button on your Quatt CIC within 60&nbsp;seconds.
+      </p>
+      <button id="qc-pair" type="button" class="btn btn-primary">Pair with Quatt</button>
+      <span id="qc-countdown"></span>
+      <div id="qc-status"></div>
+    </div>
+
+    <script>
+      (async () => {
+        const hb = window.homebridge;
+        const btn = document.getElementById('qc-pair');
+        const statusEl = document.getElementById('qc-status');
+        const cdEl = document.getElementById('qc-countdown');
+
+        const setStatus = (html) => {
+          statusEl.innerHTML = html;
+        };
+
+        async function savedCicId() {
+          const cfg = (await hb.getPluginConfig())[0] || {};
+          return (cfg.cicId || '').trim();
+        }
+
+        hb.addEventListener('pair-log', (e) => {
+          if (e.data && e.data.message) {
+            setStatus(e.data.message);
+          }
+        });
+
+        btn.addEventListener('click', async () => {
+          const cicId = await savedCicId();
+          if (!cicId) {
+            setStatus('⚠️ Enter the CIC hostname in the form below and click <b>Save</b> first.');
+            return;
+          }
+          btn.disabled = true;
+          setStatus('Requesting pairing…');
+          try {
+            await hb.request('/start-pair', { cicId });
+          } catch (err) {
+            setStatus('❌ ' + (err.message || err));
+            btn.disabled = false;
+            return;
+          }
+
+          setStatus('👉 <b>Press the button on your Quatt CIC now.</b>');
+          const deadline = Date.now() + 60000;
+          const tick = async () => {
+            const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+            cdEl.textContent = left ? '(' + left + 's)' : '';
+            if (Date.now() >= deadline) {
+              setStatus('❌ Timed out — did you press the button in time? Try again.');
+              btn.disabled = false;
+              return;
+            }
+            try {
+              const res = await hb.request('/poll-pair');
+              if (res && res.paired) {
+                cdEl.textContent = '';
+                setStatus(
+                  '✅ Paired! Installation <code>' +
+                    res.installationId +
+                    '</code>. Restart Homebridge to finish.',
+                );
+                btn.disabled = false;
+                return;
+              }
+            } catch (err) {
+              // transient — keep polling until the deadline
+            }
+            setTimeout(tick, 2500);
+          };
+          tick();
+        });
+
+        // Render the normal config fields (cicId, poll interval, log level) below.
+        hb.showSchemaForm();
+      })();
+    </script>
+  </body>
+</html>

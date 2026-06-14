@@ -34,20 +34,19 @@ npm install -g homebridge-quatt-chill
 
 ## Pairing (one time)
 
-The Chill must be paired to an anonymous identity before it can be controlled.
+The Chill must be paired to an anonymous identity once before it can be controlled.
 
 1. Find your **CIC hostname** — it looks like `cic-abc123`. It's the DHCP hostname of
-   your CIC on your network (check your router's client list).
-2. Run the pairing helper and **press the button on your CIC within 60 seconds** when
-   prompted:
+   your CIC on your network (check your router's client list). Put it in `cicId`.
+2. Pair using **either** method (you only need one):
+   - **Settings UI:** open the plugin settings, save the `cicId`, click **Pair with
+     Quatt**, and press the button on your CIC within 60 seconds.
+   - **From the log:** save the `cicId`, restart Homebridge, and when the log prompts
+     `>>> Press the button on your Quatt CIC now <<<`, press it within 60 seconds.
+   - **Headless CLI** (fallback): `quatt-chill-pair --cic cic-abc123` (run it inside the
+     Docker container if that's where Homebridge lives).
 
-   ```bash
-   quatt-chill-pair --cic cic-abc123
-   ```
-
-   (If you installed inside a Docker container, run it in that container's shell.)
-3. The helper prints an `installationId` and writes a token file. Put both into your
-   config (the token file path is optional; it defaults to the Homebridge storage path).
+That's it — the installation id and tokens are stored automatically; nothing else to copy.
 
 ## Configuration
 
@@ -60,7 +59,6 @@ Use the Homebridge UI, or add a platform block to `config.json`:
       "platform": "QuattChill",
       "name": "Quatt Chill",
       "cicId": "cic-abc123",
-      "installationId": "INS-xxxxxxxx",
       "heartrateSeconds": 60,
       "logLevel": 1
     }
@@ -71,12 +69,11 @@ Use the Homebridge UI, or add a platform block to `config.json`:
 | Field              | Required | Default            | Description                                              |
 | ------------------ | -------- | ------------------ | -------------------------------------------------------- |
 | `cicId`            | yes      | —                  | CIC hostname (e.g. `cic-abc123`), used for pairing.      |
-| `installationId`   | yes\*    | —                  | Returned by pairing (`INS-...`).                         |
 | `heartrateSeconds` | no       | `60`               | Poll cadence. The cloud refreshes ~once a minute.        |
 | `tokenFile`        | no       | HB storage path    | Where auth tokens are stored.                            |
 | `logLevel`         | no       | `1`                | `0` off, `1` info, `2` debug, `3` verbose (HTTP traces). |
 
-\* Until `installationId` is set, the plugin loads but does nothing except remind you to pair.
+Until paired, the plugin loads but does nothing except prompt you to pair.
 
 ## Development
 

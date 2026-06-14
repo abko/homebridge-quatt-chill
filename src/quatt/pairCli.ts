@@ -56,11 +56,10 @@ async function main(): Promise<void> {
 
   console.log('\n✅ Pairing complete.');
   console.log(`   token file:     ${tokenFile}`);
-  console.log(`   installationId: ${installationId}`);
-  console.log('\nAdd these to your Homebridge config (platform "QuattChill"):');
-  console.log(
-    JSON.stringify({ cicId: cic, installationId, tokenFile }, null, 2),
-  );
+  console.log(`   installationId: ${installationId} (resolved automatically; no need to configure)`);
+  console.log('\nIn your Homebridge config (platform "QuattChill") you only need:');
+  console.log(JSON.stringify({ platform: 'QuattChill', cicId: cic }, null, 2));
+  console.log('\nThen restart Homebridge.');
 }
 
 main().catch((error) => {

@@ -7,8 +7,6 @@ export const ConfigSchema = z.object({
   name: z.string().default('Quatt Chill'),
   /** CIC hostname, e.g. "cic-abc123". Required for pairing. */
   cicId: z.string().optional(),
-  /** Installation id (INS-...), filled in by pairing. */
-  installationId: z.string().optional(),
   /** Absolute path to the persisted token file. Defaults into the HB storage path. */
   tokenFile: z.string().optional(),
   /** Poll cadence in seconds. */

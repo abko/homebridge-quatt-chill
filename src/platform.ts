@@ -5,6 +5,7 @@ import { ConfigSchema, type QuattChillConfig } from './config.js';
 import { PlatformBase, formatError } from './lib/platformBase.js';
 import { QuattAuth } from './quatt/auth.js';
 import { QuattMobileClient } from './quatt/mobileApi.js';
+import { ensureInstallation } from './quatt/pairing.js';
 import type { Chill } from './quatt/types.js';
 import { DEFAULT_TOKEN_FILENAME, PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
 
@@ -21,6 +22,7 @@ export class QuattChillPlatform extends PlatformBase {
   private readonly accessoriesByChill = new Map<string, ChillAccessory>();
   private readonly missCounts = new Map<string, number>();
   private readonly heartrateBeats: number;
+  private installationId?: string;
   private refreshing = false;
   private postActionTimer?: ReturnType<typeof setTimeout>;
 
@@ -43,29 +45,34 @@ export class QuattChillPlatform extends PlatformBase {
     return PLATFORM_NAME;
   }
 
-  /** The installation id, or throw a clear error if pairing hasn't been done. */
+  /** The resolved installation id, or throw if we aren't paired yet. */
   requireInstallationId(): string {
-    if (!this.settings.installationId) {
-      throw new Error('installationId is not configured — run pairing first');
+    if (!this.installationId) {
+      throw new Error('not paired yet');
     }
-    return this.settings.installationId;
+    return this.installationId;
   }
 
   protected async discoverDevices(): Promise<void> {
-    if (!this.settings.installationId) {
+    if (!this.settings.cicId) {
       this.log.warn(
-        'Not paired yet: set "cicId" and run `quatt-chill-pair --cic %s`, then put the ' +
-          'returned installationId in the config. Skipping for now.',
-        this.settings.cicId ?? '<cic-hostname>',
+        'Set "cicId" (your CIC hostname, e.g. cic-...) in the plugin settings to enable pairing.',
       );
       return;
     }
 
     await this.auth.load();
-    if (!this.auth.isAuthenticated) {
+
+    // If already paired, this resolves the installation without any button press.
+    // If not, it logs the prompt and waits for you to press the button on the CIC.
+    try {
+      this.installationId = await ensureInstallation(this.auth, this.settings.cicId, this.log);
+      this.log.info('paired — using installation %s', this.installationId);
+    } catch (error) {
+      this.log.warn('Not paired: %s', formatError(error));
       this.log.warn(
-        'No Quatt tokens found. Run `quatt-chill-pair --cic %s` and restart Homebridge.',
-        this.settings.cicId ?? '<cic-hostname>',
+        'To pair: press the button on your CIC and restart Homebridge to retry, ' +
+          'or use the "Pair with Quatt" button in this plugin\'s settings.',
       );
       return;
     }

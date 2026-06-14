@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, rename, writeFile } from 'node:fs/promises';
 import type { LevelLogger } from '../lib/levelLogger.js';
 import {
   FIREBASE_INSTALLATIONS_URL,
@@ -66,7 +66,12 @@ export class QuattAuth {
     if (!this.tokens) {
       return;
     }
-    await writeFile(this.tokenFile, JSON.stringify(this.tokens, null, 2), { mode: 0o600 });
+    // Atomic write (temp + rename) so a concurrent writer — e.g. the settings-UI
+    // pairing process and the running plugin — can never leave a half-written file.
+    // The temp name is per-process so the two writers don't collide.
+    const tmp = `${this.tokenFile}.${process.pid}.tmp`;
+    await writeFile(tmp, JSON.stringify(this.tokens, null, 2), { mode: 0o600 });
+    await rename(tmp, this.tokenFile);
   }
 
   /**

@@ -1,7 +1,7 @@
 {
   "name": "homebridge-quatt-chill",
   "displayName": "Homebridge Quatt Chill",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Homebridge 2.0 plugin to control the Quatt Chill airco from Apple HomeKit (via the Quatt cloud mobile API).",
   "license": "MIT",
   "author": "awijma",
@@ -51,6 +51,7 @@
     "LICENSE"
   ],
   "dependencies": {
+    "@homebridge/plugin-ui-utils": "^2.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

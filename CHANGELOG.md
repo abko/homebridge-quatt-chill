@@ -4,6 +4,25 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-06-14
+
+### Added
+
+- **Pairing without the CLI.** Two new ways to pair:
+  - **From the log** — on startup, if not paired, the plugin prompts you to press the
+    button on your CIC (60s) and pairs itself.
+  - **From the settings UI** — a "Pair with Quatt" button in the plugin settings runs
+    the same flow with a live countdown.
+  The `quatt-chill-pair` CLI remains as a headless fallback.
+
+### Changed
+
+- **Config is now just `cicId`.** The `installationId` field is gone — the plugin
+  resolves the installation automatically after pairing. Existing configs keep working
+  (the field is simply ignored).
+- Token-file writes are atomic, so the settings-UI and the running plugin can pair
+  concurrently without risk of a corrupted token file.
+
 ## [0.3.1] - 2026-06-14
 
 ### Added

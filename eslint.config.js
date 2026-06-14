@@ -3,7 +3,7 @@ import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', '.hb-dev/**', 'coverage/**'],
+    ignores: ['dist/**', 'node_modules/**', '.hb-dev/**', 'coverage/**', 'homebridge-ui/**'],
   },
   ...tseslint.configs.recommended,
   prettier,
