@@ -106,6 +106,11 @@ See [`CHANGELOG.md`](./CHANGELOG.md) for release history.
   for the reverse-engineered Quatt API.
 - [ebaauw](https://github.com/ebaauw) for the Homebridge plugin patterns.
 
+## Support
+
+If this plugin is useful to you and you'd like to say thanks, donations are
+welcome (entirely optional): [bunq.me/homebridge](https://bunq.me/homebridge).
+
 ## License
 
 [MIT](./LICENSE)

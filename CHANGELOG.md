@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-06-14
+
+### Added
+
+- A donation link (`funding`), shown as a "Donate" button in the Homebridge UI and
+  a Sponsor button on the GitHub repo.
+
 ## [0.3.0] - 2026-06-13
 
 ### Changed
