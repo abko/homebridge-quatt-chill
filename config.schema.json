@@ -2,6 +2,7 @@
   "pluginAlias": "QuattChill",
   "pluginType": "platform",
   "singular": true,
+  "customUi": true,
   "headerDisplay": "Control your Quatt Chill airco from HomeKit. **Pairing is required once**: set the CIC hostname below, then either click **Pair with Quatt** above and press the button on your CIC, or just save and restart Homebridge and press the button when the log prompts you (60s).",
   "footerDisplay": "This plugin uses Quatt's cloud mobile API (reverse-engineered). It depends on Quatt's servers being reachable.",
   "schema": {

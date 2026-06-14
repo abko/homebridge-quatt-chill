@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-06-14
+
+### Fixed
+
+- The custom settings UI (the **Pair with Quatt** button) now actually appears: added the
+  required `"customUi": true` to `config.schema.json` and removed the `<html>/<head>/<body>`
+  wrappers from the UI page (the Homebridge UI injects those).
+
 ## [0.4.0] - 2026-06-14
 
 ### Added
